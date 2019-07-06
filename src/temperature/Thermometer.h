@@ -12,6 +12,8 @@
 class Thermometer {
 private:
     DallasTemperature *dallasTemperature;
+    uint8_t pin;
+
 public:
     void setup(uint8_t pin);
 

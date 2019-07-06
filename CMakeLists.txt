@@ -71,4 +71,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} src/main.cpp src/indication/LEDIndicator.cpp src/indication/LEDIndicator.h src/display/Display.cpp src/display/Display.h src/humidity/HumiditySensor.cpp src/humidity/HumiditySensor.h src/sender/Sender.cpp src/sender/Sender.h src/temperature/Thermometer.cpp src/temperature/Thermometer.h)
+add_executable(${PROJECT_NAME} ${SRC_LIST} src/main.cpp src/indication/LEDIndicator.cpp src/indication/LEDIndicator.h src/display/Display.cpp src/display/Display.h src/humidity/HumiditySensor.cpp src/humidity/HumiditySensor.h src/sender/Sender.cpp src/sender/Sender.h src/temperature/Thermometer.cpp src/temperature/Thermometer.h src/dimming/Dimmer.cpp src/dimming/Dimmer.h src/relay/Relay.cpp src/relay/Relay.h)
