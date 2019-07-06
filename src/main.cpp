@@ -27,10 +27,6 @@ auto oldHumidity = 0.0f;
 
 void handleHotSideTemperature(const uint8_t value) {
     if (value < 40) {
-        String data;
-        data.concat(F("Temp alert "));
-        data.concat(value);
-        display->displayText(6, data.c_str());
         relay->turnOn();
     } else {
         relay->turnOff();
@@ -39,10 +35,6 @@ void handleHotSideTemperature(const uint8_t value) {
 
 void handleColdSideTemperature(const uint8_t value) {
     if (value < 30) {
-        String data;
-        data.concat(F("Temp alert "));
-        data.concat(value);
-        display->displayText(6, data.c_str());
         relay->turnOn();
     }
 }
@@ -71,6 +63,10 @@ void loop() {
     auto hotSide = hotSideThermometer->getTemperature();
     auto coldSide = coldSideThermometer->getTemperature();
     auto humidity = humiditySensor->getHumidity();
+
+    if (millis() - lastMillis > 60 * 60 * 1000) {
+        display->clear();
+    }
 
     if (millis() - lastMillis > 5000) {
         if (hotSide != oldHotTemp) {
