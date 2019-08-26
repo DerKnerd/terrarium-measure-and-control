@@ -3,27 +3,31 @@
 //
 
 #include <Arduino.h>
-#include <indication/LEDIndicator.h>
 #include <display/Display.h>
 #include <humidity/HumiditySensor.h>
 #include <sender/Sender.h>
 #include <temperature/Thermometer.h>
-#include <dimming/Dimmer.h>
+#include <dimming/DimmerControl.h>
 #include <relay/Relay.h>
+#include <timing/Clock.h>
 
-const auto ledIndicator = new LEDIndicator();
 const auto display = new Display();
 const auto humiditySensor = new HumiditySensor();
 const auto sender = new Sender();
 const auto hotSideThermometer = new Thermometer();
 const auto coldSideThermometer = new Thermometer();
-const auto dimmer = new Dimmer();
+const auto dimmer = new DimmerControl();
 const auto relay = new Relay();
+const auto clock = new Clock();
 
-auto lastMillis = millis();
+auto displayTempMillis = millis();
+auto dimmMillis = millis();
+
 auto oldColdTemp = 0.0f;
 auto oldHotTemp = 0.0f;
 auto oldHumidity = 0.0f;
+
+const auto dimmChangeThresholdMillis = ((22 - 8) / 2) * 60 * 60 * 1000;
 
 void handleHotSideTemperature(const uint8_t value) {
     if (value < 40) {
@@ -40,77 +44,91 @@ void handleColdSideTemperature(const uint8_t value) {
 }
 
 void setup() {
-    ledIndicator->setup(6);
-    display->setup();
-    display->displayText(0, "Initializing...");
-    ledIndicator->startIndicating();
-
-    humiditySensor->setup(2);
-    hotSideThermometer->setup(4);
-    coldSideThermometer->setup(5);
-    sender->setup(3);
-    dimmer->setup(11);
-    relay->setup(8);
     Serial.begin(9600);
+    Serial.println(F("Init display"));
 
-    ledIndicator->stopIndicating();
+    display->setup();
+    display->clear();
+    display->displayText(F("Initializing..."), 0);
+
+    Serial.println(F("Init clock"));
+    clock->setup();
+
+    Serial.println(F("Init humidity sensor"));
+    humiditySensor->setup(2);
+
+    Serial.println(F("Init dimmer"));
+    dimmer->setup(3);
+
+    Serial.println(F("Init sender"));
+    sender->setup(4);
+
+    Serial.println(F("Init temperatures"));
+    coldSideThermometer->setup(5, 0);
+    hotSideThermometer->setup(5, 1);
+
+    Serial.println(F("Init relay"));
+    relay->setup(6);
+
     display->clear();
 }
 
 void loop() {
-    ledIndicator->loop();
+    Serial.println("Start loop");
+    const auto hotSide = hotSideThermometer->getTemperature();
+    const auto coldSide = coldSideThermometer->getTemperature();
+    const auto humidity = humiditySensor->getHumidity();
 
-    auto hotSide = hotSideThermometer->getTemperature();
-    auto coldSide = coldSideThermometer->getTemperature();
-    auto humidity = humiditySensor->getHumidity();
+//    const auto now = clock->getTime();
+//    const auto dimmChangeThresholdMillis = ((22 - 8) / 2) * 60 * 60 * 1000;
+//    if (millis() - dimmMillis > dimmChangeThresholdMillis) {
+//        dimmer->dimmUp();
+//    }
+//    display->displayText(String(now.hour()) + ":" + String(now.minute()), 1);
 
-    if (millis() - lastMillis > 60 * 60 * 1000) {
-        display->clear();
-    }
-
-    if (millis() - lastMillis > 5000) {
+    if (millis() - displayTempMillis > 5000) {
         if (hotSide != oldHotTemp) {
-            display->displayText(0, "Hot Side:");
+            display->displayText(F("Hot Side:"), 2);
 
             String hotSideText;
             hotSideText.concat(hotSide);
             hotSideText.concat(F(" C"));
-            display->displayText(1, hotSideText.c_str());
+            display->displayText(hotSideText, 3);
             oldHotTemp = hotSide;
 
             handleHotSideTemperature(hotSide);
         }
 
         if (coldSide != oldColdTemp) {
-            display->displayText(2, "Cold Side:");
+            display->displayText(F("Cold Side:"), 4);
 
             String coldSideText;
             coldSideText.concat(coldSide);
             coldSideText.concat(F(" C"));
-            display->displayText(3, coldSideText.c_str());
+            display->displayText(coldSideText, 5);
             oldColdTemp = coldSide;
 
             handleColdSideTemperature(coldSide);
         }
 
         if (humidity != oldHumidity) {
-            display->displayText(4, "Humidity:");
+            display->displayText(F("Humidity:"), 6);
 
             String humidityText;
             humidityText.concat(humidity);
             humidityText.concat(F(" %"));
-            display->displayText(5, humidityText.c_str());
+            display->displayText(humidityText, 7);
             oldHumidity = humidity;
         }
 
-        lastMillis = millis();
+        displayTempMillis = millis();
     }
 
     auto jsonDoc = DynamicJsonDocument(200);
-    jsonDoc["action"] = F("data");
-    jsonDoc["hotSide"] = hotSide;
-    jsonDoc["coldSide"] = coldSide;
-    jsonDoc["humidity"] = humidity;
+    jsonDoc[F("action")] = F("data");
+    jsonDoc[F("hotSide")] = hotSide;
+    jsonDoc[F("coldSide")] = coldSide;
+    jsonDoc[F("humidity")] = humidity;
 
     sender->send(jsonDoc);
 }

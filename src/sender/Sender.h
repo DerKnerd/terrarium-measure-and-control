@@ -14,12 +14,12 @@ private:
     RFTransmitter *transmitter;
     byte nodeId;
 
-    byte generateNodeId();
+    static byte generateNodeId();
 
 public:
     void setup(uint8_t pin);
 
-    void send(JsonDocument data);
+    void send(const DynamicJsonDocument &data);
 };
 
 

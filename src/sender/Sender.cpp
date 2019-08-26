@@ -5,22 +5,37 @@
 #include "Sender.h"
 
 void Sender::setup(const uint8_t pin) {
+    Serial.println(F("Init EEPROM"));
     EEPROM.begin();
+
+    Serial.println(F("Generate node id"));
     nodeId = generateNodeId();
+
+    Serial.print(F("Node id is: "));
+    Serial.println(nodeId);
+
+    Serial.println(F("Init RFTransmitter"));
     transmitter = new RFTransmitter(pin, nodeId);
 
-    StaticJsonDocument<39> doc;
+    Serial.println(F("Create json doc"));
+    auto doc = DynamicJsonDocument(39);
     doc["action"] = "register";
     doc["nodeId"] = nodeId;
 
+    Serial.println(F("Send register json"));
     send(doc);
 }
 
-void Sender::send(JsonDocument data) {
+void Sender::send(const DynamicJsonDocument &data) {
+    Serial.println(F("Create msg pack data"));
     String output;
     serializeMsgPack(data, output);
 
-    transmitter->send((byte *) output.c_str(), output.length());
+    Serial.print(F("Serialized data"));
+    Serial.println(output);
+
+    Serial.println(F("Send data via transmitter"));
+    transmitter->print(const_cast<char *>(output.c_str()));
 }
 
 byte Sender::generateNodeId() {

@@ -5,17 +5,30 @@
 #ifndef TERRARIUM_MEASURE_AND_CONTROL_DISPLAY_H
 #define TERRARIUM_MEASURE_AND_CONTROL_DISPLAY_H
 
-#include <U8x8lib.h>
+#include <HID.h>
+#include <SPI.h>
+#include <epd2in9.h>
+#include <epdpaint.h>
+
+#define COLORED 0
+#define UNCOLORED 1
 
 class Display {
 private:
-    U8X8_SH1106_128X64_NONAME_HW_I2C *screen;
+    unsigned char image[1024];
+    Paint *paint;
+    Epd *epd;
+
 public:
     void setup();
 
     void clear();
 
-    void displayText(byte line, const char *text);
+    void displayText(char *text, uint8_t line);
+
+    void displayText(__FlashStringHelper *text, uint8_t line);
+
+    void displayText(const String &text, uint8_t line);
 };
 
 

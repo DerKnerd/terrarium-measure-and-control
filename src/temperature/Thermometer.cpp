@@ -4,8 +4,9 @@
 
 #include "Thermometer.h"
 
-void Thermometer::setup(const uint8_t pin) {
+void Thermometer::setup(const uint8_t pin, const uint8_t oneWireIndex) {
     this->pin = pin;
+    this->oneWireIndex = oneWireIndex;
     auto oneWire = new OneWire(pin);
     dallasTemperature = new DallasTemperature(oneWire);
     dallasTemperature->begin();
@@ -14,5 +15,5 @@ void Thermometer::setup(const uint8_t pin) {
 float Thermometer::getTemperature() {
     dallasTemperature->requestTemperatures();
 
-    return dallasTemperature->getTempCByIndex(0);
+    return dallasTemperature->getTempCByIndex(this->oneWireIndex);
 }
