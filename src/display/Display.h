@@ -24,6 +24,8 @@ public:
 
     void clear();
 
+    void displayTextTopRight(const String &text);
+
     void displayText(char *text, uint8_t line);
 
     void displayText(__FlashStringHelper *text, uint8_t line);

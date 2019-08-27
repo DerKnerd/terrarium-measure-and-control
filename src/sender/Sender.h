@@ -5,21 +5,19 @@
 #ifndef TERRARIUM_MEASURE_AND_CONTROL_SENDER_H
 #define TERRARIUM_MEASURE_AND_CONTROL_SENDER_H
 
+#define ESP8266_USE_SOFTWARE_SERIAL
+
 #include <ArduinoJson.h>
-#include <RFTransmitter.h>
-#include <EEPROM.h>
+#include <ESP8266.h>
 
 class Sender {
 private:
-    RFTransmitter *transmitter;
-    byte nodeId;
-
-    static byte generateNodeId();
+    ESP8266 *esp8266;
 
 public:
-    void setup(uint8_t pin);
+    void setup(uint8_t txPin, uint8_t rxPin);
 
-    void send(const DynamicJsonDocument &data);
+    String getIp();
 };
 
 

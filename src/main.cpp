@@ -27,7 +27,7 @@ auto oldColdTemp = 0.0f;
 auto oldHotTemp = 0.0f;
 auto oldHumidity = 0.0f;
 
-const auto dimmChangeThresholdMillis = ((22 - 8) / 2) * 60 * 60 * 1000;
+const auto dimmChangeThresholdMillis = ((22 - 8) / 2) * 60 * 60 * 1000.0;
 
 void handleHotSideTemperature(const uint8_t value) {
     if (value < 40) {
@@ -60,9 +60,6 @@ void setup() {
     Serial.println(F("Init dimmer"));
     dimmer->setup(3);
 
-    Serial.println(F("Init sender"));
-    sender->setup(4);
-
     Serial.println(F("Init temperatures"));
     coldSideThermometer->setup(5, 0);
     hotSideThermometer->setup(5, 1);
@@ -70,11 +67,16 @@ void setup() {
     Serial.println(F("Init relay"));
     relay->setup(6);
 
+    Serial.println(F("Init sender"));
+    sender->setup(A0, A1);
     display->clear();
+
+    auto ip = sender->getIp();
+    display->displayTextTopRight(ip);
 }
 
 void loop() {
-    Serial.println("Start loop");
+    Serial.println(F("Start loop"));
     const auto hotSide = hotSideThermometer->getTemperature();
     const auto coldSide = coldSideThermometer->getTemperature();
     const auto humidity = humiditySensor->getHumidity();
@@ -129,6 +131,4 @@ void loop() {
     jsonDoc[F("hotSide")] = hotSide;
     jsonDoc[F("coldSide")] = coldSide;
     jsonDoc[F("humidity")] = humidity;
-
-    sender->send(jsonDoc);
 }

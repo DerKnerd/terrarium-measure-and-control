@@ -2,51 +2,25 @@
 // Created by imanuel on 06.07.19.
 //
 
+#include <SoftwareSerial.h>
+#include <EEPROM.h>
+#include <eeprom/EEPROMAccess.h>
 #include "Sender.h"
 
-void Sender::setup(const uint8_t pin) {
-    Serial.println(F("Init EEPROM"));
+void Sender::setup(uint8_t txPin, uint8_t rxPin) {
+    Serial.println(F("Init ESP8266"));
     EEPROM.begin();
-
-    Serial.println(F("Generate node id"));
-    nodeId = generateNodeId();
-
-    Serial.print(F("Node id is: "));
-    Serial.println(nodeId);
-
-    Serial.println(F("Init RFTransmitter"));
-    transmitter = new RFTransmitter(pin, nodeId);
-
-    Serial.println(F("Create json doc"));
-    auto doc = DynamicJsonDocument(39);
-    doc["action"] = "register";
-    doc["nodeId"] = nodeId;
-
-    Serial.println(F("Send register json"));
-    send(doc);
+    auto serial = new SoftwareSerial(txPin, rxPin);
+    esp8266 = new ESP8266(*serial);
+    auto ssid = EEPROMAccess::readString(0);
+    auto passphrase = EEPROMAccess::readString(34);
+    esp8266->setOprToStationSoftAP();
+    esp8266->joinAP(ssid, passphrase);
+    esp8266->enableMUX();
+    esp8266->startTCPServer(8080);
+    esp8266->setTCPServerTimeout(10);
 }
 
-void Sender::send(const DynamicJsonDocument &data) {
-    Serial.println(F("Create msg pack data"));
-    String output;
-    serializeMsgPack(data, output);
-
-    Serial.print(F("Serialized data"));
-    Serial.println(output);
-
-    Serial.println(F("Send data via transmitter"));
-    transmitter->print(const_cast<char *>(output.c_str()));
-}
-
-byte Sender::generateNodeId() {
-    auto eepromId = EEPROM.read(0);
-    if (eepromId <= 200 && eepromId >= 10) {
-        return eepromId;
-    }
-
-    randomSeed(analogRead(A0));
-    byte id = random(10, 200);
-    EEPROM.update(0, id);
-
-    return id;
+String Sender::getIp() {
+    return esp8266->getLocalIP();
 }
