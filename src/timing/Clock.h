@@ -9,9 +9,9 @@
 
 class Clock {
 public:
-    void setup();
+    static void setup();
 
-    DateTime getTime();
+    static DateTime getTime();
 };
 
 

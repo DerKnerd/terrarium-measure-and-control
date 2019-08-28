@@ -12,13 +12,11 @@
 class Thermometer {
 private:
     DallasTemperature *dallasTemperature;
-    uint8_t pin;
-    uint8_t oneWireIndex;
 
 public:
-    void setup(uint8_t pin, uint8_t oneWireIndex);
+    void setup(uint8_t pin);
 
-    float getTemperature();
+    float getTemperature(uint8_t oneWireIndex);
 };
 
 
