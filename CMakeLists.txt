@@ -8,6 +8,14 @@ include_directories(.pio/libdeps/nanoatmega328/RTClib_ID83)
 include_directories(".pio/libdeps/nanoatmega328/Adafruit Unified Sensor_ID31")
 include_directories(.pio/libdeps/nanoatmega328/DallasTemperature_ID54)
 include_directories(.pio/libdeps/nanoatmega328/OneWire_ID1)
+
+include_directories(.pio/libdeps/nano_33_iot/ArduinoJson_ID64)
+include_directories(".pio/libdeps/nano_33_iot/DHT sensor library_ID19")
+include_directories(.pio/libdeps/nano_33_iot/RTClib_ID83)
+include_directories(".pio/libdeps/nano_33_iot/Adafruit Unified Sensor_ID31")
+include_directories(.pio/libdeps/nano_33_iot/DallasTemperature_ID54)
+include_directories(.pio/libdeps/nano_33_iot/OneWire_ID1)
+include_directories(.pio/libdeps/nano_33_iot/WiFiNINA_ID5538/src)
 include_directories(lib/epd2in9)
 
 add_custom_target(
@@ -70,4 +78,4 @@ add_custom_target(
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} src/main.cpp src/display/Display.cpp src/display/Display.h src/humidity/HumiditySensor.cpp src/humidity/HumiditySensor.h src/temperature/Thermometer.cpp src/temperature/Thermometer.h src/dimming/DimmerControl.cpp src/dimming/DimmerControl.h src/relay/Relay.cpp src/relay/Relay.h src/timing/Clock.cpp src/timing/Clock.h src/eeprom/EEPROMAccess.cpp src/eeprom/EEPROMAccess.h src/work/Runner.cpp src/work/Runner.h)
+add_executable(${PROJECT_NAME} ${SRC_LIST} src/main.cpp src/display/Display.cpp src/display/Display.h src/humidity/HumiditySensor.cpp src/humidity/HumiditySensor.h src/temperature/Thermometer.cpp src/temperature/Thermometer.h src/dimming/DimmerControl.cpp src/dimming/DimmerControl.h src/relay/Relay.cpp src/relay/Relay.h src/timing/Clock.cpp src/timing/Clock.h src/work/Runner.cpp src/work/Runner.h src/server/WifiServer.cpp src/server/WifiServer.h src/WifiSecrets.h)

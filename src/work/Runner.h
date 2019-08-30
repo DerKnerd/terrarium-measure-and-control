@@ -13,8 +13,6 @@
 #include "../relay/Relay.h"
 #include "../timing/Clock.h"
 
-#define DIMM_CHANGE_THRESHOLD_MILLIS = ((22.0 - 8) / 2) * 60 * 60 * 1000.0;
-
 class Runner {
 public:
     void setup();
@@ -30,8 +28,6 @@ private:
     Clock *clock = new Clock();
 
     unsigned long displayTempMillis = millis();
-    unsigned long displayTimeMillis = millis();
-    unsigned long dimmMillis = millis();
     bool showTimeSeparator = false;
 
     float oldColdTemp = 0.0f;
@@ -39,8 +35,6 @@ private:
     float oldHumidity = 0.0f;
 
     void handleHotSideTemperature(uint8_t value);
-
-    void handleColdSideTemperature(uint8_t value);
 };
 
 

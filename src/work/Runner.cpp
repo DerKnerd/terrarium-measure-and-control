@@ -22,11 +22,12 @@ void Runner::setup() {
 
     Serial.println(F("Initializing dimmer"));
     display->displayText(F("Initializing dimmer"), 3);
-    dimmer->setup(3);
+    dimmer->setup(3, 5);
+    dimmer->reset();
 
     Serial.println(F("Initializing temperatures"));
     display->displayText(F("Initializing temperatures"), 4);
-    thermometer->setup(5);
+    thermometer->setup(4);
 
     Serial.println(F("Initializing relay"));
     display->displayText(F("Initializing relay"), 5);
@@ -45,9 +46,15 @@ void Runner::loop() {
     const auto humidity = humiditySensor->getHumidity();
 
     auto now = Clock::getTime();
-//    if (millis() - dimmMillis > DIMM_CHANGE_THRESHOLD_MILLIS) {
-//        dimmer->dimmUp();
-//    }
+    if (now.hour() == 8 || now.hour() == 9 || now.hour() == 10) {
+        dimmer->dimmUp();
+    } else if (now.hour() == 20 || now.hour() == 21 || now.hour() == 22) {
+        dimmer->dimmDown();
+    } else if (now.hour() > 22 || now.hour() < 8) {
+        dimmer->reset();
+    } else {
+        dimmer->dimm(255);
+    }
 
     String time = "Time: ";
     time.concat(now.hour());
@@ -56,6 +63,7 @@ void Runner::loop() {
     } else {
         time.concat(" ");
     }
+
     time.concat(now.minute());
     showTimeSeparator = !showTimeSeparator;
 
@@ -84,8 +92,6 @@ void Runner::loop() {
             display->displayText(coldSideText, 3);
             oldColdTemp = coldSide;
             Serial.println(coldSideText);
-
-            handleColdSideTemperature(coldSide);
         }
 
         if (humidity != oldHumidity) {
@@ -95,7 +101,6 @@ void Runner::loop() {
             humidityText.concat(F(" %"));
             display->displayText(humidityText, 4);
             oldHumidity = humidity;
-            Serial.print(F("Humidity: "));
             Serial.println(humidityText);
         }
 
@@ -106,13 +111,7 @@ void Runner::loop() {
 void Runner::handleHotSideTemperature(const uint8_t value) {
     if (value < 40) {
         relay->turnOn();
-    } else {
+    } else if (value > 50) {
         relay->turnOff();
-    }
-}
-
-void Runner::handleColdSideTemperature(const uint8_t value) {
-    if (value < 30) {
-        relay->turnOn();
     }
 }
