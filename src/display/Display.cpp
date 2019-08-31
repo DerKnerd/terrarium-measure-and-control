@@ -54,8 +54,8 @@ void Display::displayText(const String &text, uint8_t line) {
     paint->Clear(UNCOLORED);
     paint->DrawStringAt(0, 0, text.c_str(), &Font12, COLORED);
 
-    epd->SetFrameMemory(paint->GetImage(), line * width + 8, 288 - height, paint->GetWidth(), paint->GetHeight());
+    epd->SetFrameMemory(paint->GetImage(), line * width, 288 - height, paint->GetWidth(), paint->GetHeight());
     epd->DisplayFrame();
-    epd->SetFrameMemory(paint->GetImage(), line * width + 8, 288 - height, paint->GetWidth(), paint->GetHeight());
+    epd->SetFrameMemory(paint->GetImage(), line * width, 288 - height, paint->GetWidth(), paint->GetHeight());
     epd->DisplayFrame();
 }

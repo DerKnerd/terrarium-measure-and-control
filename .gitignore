@@ -108,3 +108,5 @@ fabric.properties
 *.out
 *.app
 
+src/WifiSecrets.h
+src/WhoIsThis.h

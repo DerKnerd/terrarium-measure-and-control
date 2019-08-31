@@ -6,6 +6,7 @@
 #define TERRARIUM_MEASURE_AND_CONTROL_RUNNER_H
 
 #include <Arduino.h>
+#include <server/PrometheusServer.h>
 #include "../display/Display.h"
 #include "../humidity/HumiditySensor.h"
 #include "../temperature/Thermometer.h"
@@ -26,6 +27,7 @@ private:
     DimmerControl *dimmer = new DimmerControl();
     Relay *relay = new Relay();
     Clock *clock = new Clock();
+    PrometheusServer *prometheusServer = new PrometheusServer();
 
     unsigned long displayTempMillis = millis();
     bool showTimeSeparator = false;

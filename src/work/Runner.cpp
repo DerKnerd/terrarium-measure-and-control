@@ -9,34 +9,36 @@ void Runner::setup() {
     Serial.println(F("Initializing..."));
 
     Serial.println(F("Initializing display"));
-    display->setup();
-    display->displayText(F("Initializing..."), 0);
+//    display->setup();
+//    display->displayText(F("Initializing..."), 0);
 
     Serial.println(F("Initializing clock"));
-    display->displayText(F("Initializing clock"), 1);
+//    display->displayText(F("Initializing clock"), 1);
     Clock::setup();
 
     Serial.println(F("Initializing humidity sensor"));
-    display->displayText(F("Initializing humidity sensor"), 2);
+//    display->displayText(F("Initializing humidity sensor"), 2);
     humiditySensor->setup(2);
 
     Serial.println(F("Initializing dimmer"));
-    display->displayText(F("Initializing dimmer"), 3);
+//    display->displayText(F("Initializing dimmer"), 3);
     dimmer->setup(3, 5);
     dimmer->reset();
 
     Serial.println(F("Initializing temperatures"));
-    display->displayText(F("Initializing temperatures"), 4);
+//    display->displayText(F("Initializing temperatures"), 4);
     thermometer->setup(4);
 
     Serial.println(F("Initializing relay"));
-    display->displayText(F("Initializing relay"), 5);
+//    display->displayText(F("Initializing relay"), 5);
     relay->setup(6);
 
-    display->displayText(F("Finish setup"), 6);
-    delay(4000);
+    Serial.println(F("Initializing prometheus"));
+//    display->displayText(F("Initializing prometheus"), 6);
+    prometheusServer->setup();
 
-    display->clear();
+//    display->displayText(F("Finish setup"), 7);
+//    display->clear();
 }
 
 void Runner::loop() {
@@ -56,6 +58,8 @@ void Runner::loop() {
         dimmer->dimm(255);
     }
 
+//    prometheusServer->handleRequest(hotSide, coldSide, humidity, now.timestamp(now.TIMESTAMP_FULL));
+
     String time = "Time: ";
     time.concat(now.hour());
     if (showTimeSeparator) {
@@ -69,7 +73,7 @@ void Runner::loop() {
 
     Serial.print("Time: ");
     Serial.println(time);
-    display->displayText(time, 0);
+//    display->displayText(time, 0);
 
     if (millis() - displayTempMillis > 5000) {
         if (hotSide != oldHotTemp) {
@@ -77,7 +81,7 @@ void Runner::loop() {
             String hotSideText = F("Hot Side:  ");
             hotSideText.concat(hotSide);
             hotSideText.concat(F(" C"));
-            display->displayText(hotSideText, 2);
+//            display->displayText(hotSideText, 2);
             oldHotTemp = hotSide;
             Serial.println(hotSideText);
 
@@ -89,7 +93,7 @@ void Runner::loop() {
             String coldSideText = F("Cold Side: ");
             coldSideText.concat(coldSide);
             coldSideText.concat(F(" C"));
-            display->displayText(coldSideText, 3);
+//            display->displayText(coldSideText, 3);
             oldColdTemp = coldSide;
             Serial.println(coldSideText);
         }
@@ -99,7 +103,7 @@ void Runner::loop() {
             String humidityText = F("Humidity:  ");
             humidityText.concat(humidity);
             humidityText.concat(F(" %"));
-            display->displayText(humidityText, 4);
+//            display->displayText(humidityText, 4);
             oldHumidity = humidity;
             Serial.println(humidityText);
         }
