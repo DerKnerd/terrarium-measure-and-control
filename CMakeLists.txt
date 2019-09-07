@@ -78,4 +78,4 @@ add_custom_target(
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} src/main.cpp src/display/Display.cpp src/display/Display.h src/humidity/HumiditySensor.cpp src/humidity/HumiditySensor.h src/temperature/Thermometer.cpp src/temperature/Thermometer.h src/dimming/DimmerControl.cpp src/dimming/DimmerControl.h src/relay/Relay.cpp src/relay/Relay.h src/timing/Clock.cpp src/timing/Clock.h src/work/Runner.cpp src/work/Runner.h src/server/PrometheusServer.cpp src/server/PrometheusServer.h src/WifiSecrets.h)
+add_executable(${PROJECT_NAME} ${SRC_LIST} src/main.cpp src/display/Display.cpp src/display/Display.h src/humidity/HumiditySensor.cpp src/humidity/HumiditySensor.h src/temperature/Thermometer.cpp src/temperature/Thermometer.h src/dimming/DimmerControl.cpp src/dimming/DimmerControl.h src/relay/Relay.cpp src/relay/Relay.h src/timing/Clock.cpp src/timing/Clock.h src/work/Runner.cpp src/work/Runner.h)

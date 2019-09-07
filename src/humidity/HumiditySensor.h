@@ -15,6 +15,8 @@ public:
     void setup(uint8_t pin);
 
     float getHumidity();
+
+    float getTemperature();
 };
 
 
