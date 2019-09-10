@@ -4,14 +4,14 @@ void Display::setup() {
     Serial.println(F("Create epd"));
     epd = new Epd();
 
-    Serial.println(F("Create paint"));
-    paint = new Paint(this->image, 0, 0);
-
     Serial.println(F("Init epd"));
     if (epd->Init(lut_partial_update) != 0) {
         Serial.print(F("e-Paper init failed"));
         return;
     }
+
+    Serial.println(F("Create paint"));
+    paint = new Paint(this->image, 0, 0);
 
     Serial.println(F("Clear frame memory"));
     clear();
@@ -22,17 +22,29 @@ void Display::setup() {
     delay(2000);
     clear();
 
+    Serial.println(F("Init epd"));
     if (epd->Init(lut_partial_update) != 0) {
-        Serial.println(F("e-Paper init failed"));
+        Serial.print(F("e-Paper init failed"));
         return;
     }
 }
 
 void Display::clear() {
+    Serial.println(F("Init epd"));
+    if (epd->Init(lut_partial_update) != 0) {
+        Serial.print(F("e-Paper init failed"));
+        return;
+    }
+
     epd->ClearFrameMemory(0xFF);
     epd->DisplayFrame();
     epd->ClearFrameMemory(0xFF);
     epd->DisplayFrame();
+
+    if (epd->Init(lut_partial_update) != 0) {
+        Serial.println(F("e-Paper init failed"));
+        return;
+    }
 }
 
 void Display::displayText(char *text, uint8_t line) {

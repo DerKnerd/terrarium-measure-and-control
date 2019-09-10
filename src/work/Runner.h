@@ -28,11 +28,8 @@ private:
     Clock *clock = new Clock();
 
     unsigned long displayTempMillis = millis();
+    unsigned long cleanDisplayMillis = millis();
     bool showTimeSeparator = false;
-
-    float oldColdTemp = 0.0f;
-    float oldHotTemp = 0.0f;
-    float oldHumidity = 0.0f;
 
     void handleHotSideTemperature(uint8_t value);
 };

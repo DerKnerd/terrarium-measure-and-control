@@ -46,12 +46,47 @@ void Runner::loop() {
     auto now = Clock::getTime();
     if (now.hour() == 8 || now.hour() == 9 || now.hour() == 10) {
         dimmer->dimmUp();
+        handleHotSideTemperature(hotSide);
     } else if (now.hour() == 20 || now.hour() == 21 || now.hour() == 22) {
         dimmer->dimmDown();
+        handleHotSideTemperature(hotSide);
     } else if (now.hour() > 22 || now.hour() < 8) {
         dimmer->reset();
     } else {
         dimmer->dimm(255);
+        handleHotSideTemperature(hotSide);
+    }
+
+    auto currentMillis = millis();
+    if (currentMillis - displayTempMillis >= 1000) {
+        if (currentMillis - cleanDisplayMillis >= 600000) {
+            Serial.println(currentMillis - cleanDisplayMillis);
+            display->clear();
+            cleanDisplayMillis = currentMillis;
+        }
+
+        Serial.println(F("Display hot side temperature"));
+        String hotSideText = F("Hot Side:  ");
+        hotSideText.concat(hotSide);
+        hotSideText.concat(F(" C"));
+        display->displayText(hotSideText, 2);
+        Serial.println(hotSideText);
+
+        Serial.println(F("Display cold side temperature"));
+        String coldSideText = F("Cold Side: ");
+        coldSideText.concat(coldSide);
+        coldSideText.concat(F(" C"));
+        display->displayText(coldSideText, 3);
+        Serial.println(coldSideText);
+
+        Serial.println("Display humidity");
+        String humidityText = F("Humidity:  ");
+        humidityText.concat(humidity);
+        humidityText.concat(F(" %"));
+        display->displayText(humidityText, 4);
+        Serial.println(humidityText);
+
+        displayTempMillis = millis();
     }
 
     String time = "Time: ";
@@ -65,45 +100,8 @@ void Runner::loop() {
     time.concat(now.minute());
     showTimeSeparator = !showTimeSeparator;
 
-    Serial.print("Time: ");
     Serial.println(time);
     display->displayText(time, 0);
-
-    if (millis() - displayTempMillis > 5000) {
-        if (hotSide != oldHotTemp) {
-            Serial.println(F("Display hot side temperature"));
-            String hotSideText = F("Hot Side:  ");
-            hotSideText.concat(hotSide);
-            hotSideText.concat(F(" C"));
-            display->displayText(hotSideText, 2);
-            oldHotTemp = hotSide;
-            Serial.println(hotSideText);
-
-            handleHotSideTemperature(hotSide);
-        }
-
-        if (coldSide != oldColdTemp) {
-            Serial.println(F("Display cold side temperature"));
-            String coldSideText = F("Cold Side: ");
-            coldSideText.concat(coldSide);
-            coldSideText.concat(F(" C"));
-            display->displayText(coldSideText, 3);
-            oldColdTemp = coldSide;
-            Serial.println(coldSideText);
-        }
-
-        if (humidity != oldHumidity) {
-            Serial.println("Display humidity");
-            String humidityText = F("Humidity:  ");
-            humidityText.concat(humidity);
-            humidityText.concat(F(" %"));
-            display->displayText(humidityText, 4);
-            oldHumidity = humidity;
-            Serial.println(humidityText);
-        }
-
-        displayTempMillis = millis();
-    }
 }
 
 void Runner::handleHotSideTemperature(const uint8_t value) {
