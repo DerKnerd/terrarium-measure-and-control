@@ -9,6 +9,7 @@
 #include <SPI.h>
 #include <epd2in9.h>
 #include <epdpaint.h>
+#include "../Symbols.h"
 
 #define COLORED 0
 #define UNCOLORED 1
@@ -23,10 +24,6 @@ public:
     void setup();
 
     void clear();
-
-    void displayText(char *text, uint8_t line);
-
-    void displayText(__FlashStringHelper *text, uint8_t line);
 
     void displayText(const String &text, uint8_t line);
 };

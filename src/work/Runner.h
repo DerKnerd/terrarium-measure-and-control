@@ -6,6 +6,7 @@
 #define TERRARIUM_MEASURE_AND_CONTROL_RUNNER_H
 
 #include <Arduino.h>
+#include "../Symbols.h"
 #include "../display/Display.h"
 #include "../humidity/HumiditySensor.h"
 #include "../temperature/Thermometer.h"
@@ -27,7 +28,6 @@ private:
     Relay *relay = new Relay();
     Clock *clock = new Clock();
 
-    unsigned long displayTempMillis = millis();
     unsigned long cleanDisplayMillis = millis();
     bool showTimeSeparator = false;
 

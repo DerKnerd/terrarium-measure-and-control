@@ -1,38 +1,58 @@
 #include "Display.h"
 
 void Display::setup() {
-    Serial.println(F("Create epd"));
+#ifdef DEBUG
+    Serial.println(F("Create epd instance"));
+#endif
     epd = new Epd();
 
-    Serial.println(F("Init epd"));
+#ifdef DEBUG
+    Serial.println(F("Initialize epd"));
+#endif
     if (epd->Init(lut_full_update) != 0) {
+#ifdef DEBUG
         Serial.print(F("e-Paper init failed"));
+#endif
         return;
     }
 
+#ifdef DEBUG
     Serial.println(F("Create paint"));
+#endif
     paint = new Paint(this->image, 0, 0);
 
+#ifdef DEBUG
     Serial.println(F("Clear frame memory"));
+#endif
     clear();
 
+#ifdef DEBUG
     Serial.println(F("Display hello world"));
+#endif
     displayText(F("Hello World"), 0);
 
     delay(2000);
     clear();
 
+#ifdef DEBUG
     Serial.println(F("Init epd"));
+#endif
     if (epd->Init(lut_partial_update) != 0) {
+#ifdef DEBUG
         Serial.print(F("e-Paper init failed"));
+#endif
         return;
     }
 }
 
 void Display::clear() {
-    Serial.println(F("Init epd"));
+#ifdef DEBUG
+    Serial.println(F("Clearing display"));
+#endif
     if (epd->Init(lut_full_update) != 0) {
+#ifdef DEBUG
         Serial.println(F("Clearing failed"));
+#endif
         return;
     }
 
@@ -42,18 +62,11 @@ void Display::clear() {
     epd->DisplayFrame();
 
     if (epd->Init(lut_partial_update) != 0) {
-        Serial.println(
-                F("Clearing                                                                                                                                                                                                                                                                       failed"));
+#ifdef DEBUG
+        Serial.println(F("Clearing failed"));
+#endif
         return;
     }
-}
-
-void Display::displayText(char *text, uint8_t line) {
-    this->displayText(String(text), line);
-}
-
-void Display::displayText(__FlashStringHelper *text, uint8_t line) {
-    this->displayText(String(text), line);
 }
 
 void Display::displayText(const String &text, uint8_t line) {
