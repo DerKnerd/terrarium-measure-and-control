@@ -5,7 +5,7 @@ void Display::setup() {
     epd = new Epd();
 
     Serial.println(F("Init epd"));
-    if (epd->Init(lut_partial_update) != 0) {
+    if (epd->Init(lut_full_update) != 0) {
         Serial.print(F("e-Paper init failed"));
         return;
     }
@@ -31,8 +31,8 @@ void Display::setup() {
 
 void Display::clear() {
     Serial.println(F("Init epd"));
-    if (epd->Init(lut_partial_update) != 0) {
-        Serial.print(F("e-Paper init failed"));
+    if (epd->Init(lut_full_update) != 0) {
+        Serial.println(F("Clearing failed"));
         return;
     }
 
@@ -42,7 +42,8 @@ void Display::clear() {
     epd->DisplayFrame();
 
     if (epd->Init(lut_partial_update) != 0) {
-        Serial.println(F("e-Paper init failed"));
+        Serial.println(
+                F("Clearing                                                                                                                                                                                                                                                                       failed"));
         return;
     }
 }
