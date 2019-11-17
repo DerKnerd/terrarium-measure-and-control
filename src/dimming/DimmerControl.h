@@ -11,10 +11,9 @@
 class DimmerControl {
 private:
     uint8_t pin;
-    uint8_t pin2;
     uint8_t dimmStatus;
 public:
-    void setup(uint8_t pin, uint8_t pin2);
+    void setup(uint8_t pin);
 
     void dimm(uint8_t value);
 

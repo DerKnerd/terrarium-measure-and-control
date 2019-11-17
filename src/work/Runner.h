@@ -25,7 +25,8 @@ private:
     HumiditySensor *humiditySensor = new HumiditySensor();
     Thermometer *thermometer = new Thermometer();
     DimmerControl *dimmer = new DimmerControl();
-    Relay *relay = new Relay();
+    Relay *heatRelay = new Relay();
+    Relay *uvRelay = new Relay();
     Clock *clock = new Clock();
 
     unsigned long cleanDisplayMillis = millis();

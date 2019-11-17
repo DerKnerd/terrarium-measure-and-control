@@ -30,7 +30,7 @@ void Runner::setup() {
     Serial.println(F("Initializing dimmer"));
 #endif
     display->displayText(F("Initializing dimmer"), 3);
-    dimmer->setup(3, 5);
+    dimmer->setup(5);
     dimmer->reset();
 
 #ifdef DEBUG
@@ -40,10 +40,16 @@ void Runner::setup() {
     thermometer->setup(4);
 
 #ifdef DEBUG
-    Serial.println(F("Initializing relay"));
+    Serial.println(F("Initializing heat relay"));
 #endif
-    display->displayText(F("Initializing relay"), 5);
-    relay->setup(6);
+    display->displayText(F("Initializing heat relay"), 5);
+    heatRelay->setup(6);
+
+#ifdef DEBUG
+    Serial.println(F("Initializing uv relay"));
+#endif
+    display->displayText(F("Initializing uv relay"), 6);
+    uvRelay->setup(12);
 
     display->displayText(F("Finish setup"), 7);
     display->clear();
@@ -67,6 +73,10 @@ void Runner::loop() {
         time.concat(" ");
     }
 
+    if (now.minute() < 10) {
+        time.concat("0");
+    }
+
     time.concat(now.minute());
     showTimeSeparator = !showTimeSeparator;
 
@@ -75,20 +85,31 @@ void Runner::loop() {
 #endif
     display->displayText(time, 0);
 
-    if (now.hour() == 8 || now.hour() == 9 || now.hour() == 10) {
-        dimmer->dimmUp();
+    auto dimmValue = 0;
+    if (now.hour() == 7 || now.hour() == 8 || now.hour() == 9) {
+        dimmValue = ceil((((now.hour() - 7) * 60) + now.minute()) / (180.0 / 255.0));
         handleHotSideTemperature(hotSide);
-    } else if (now.hour() == 20 || now.hour() == 21 || now.hour() == 22) {
-        dimmer->dimmDown();
+        uvRelay->turnOn();
+    } else if (now.hour() == 19 || now.hour() == 20 || now.hour() == 21) {
+        dimmValue = floor(255 - ((((now.hour() - 19) * 60) + now.minute()) / (180.0 / 255.0)));
         handleHotSideTemperature(hotSide);
-    } else if (now.hour() > 22 || now.hour() < 8) {
-        dimmer->reset();
-        relay->turnOff();
+        uvRelay->turnOn();
+    } else if (now.hour() > 21 || now.hour() < 7) {
+        dimmValue = 0;
+        heatRelay->turnOff();
+        uvRelay->turnOff();
     } else {
-        dimmer->dimm(255);
+        uvRelay->turnOn();
+        dimmValue = 255;
         handleHotSideTemperature(hotSide);
     }
 
+    dimmer->dimm(dimmValue);
+
+#ifdef DEBUG
+    Serial.print(F("Dimmed to: "));
+    Serial.println(dimmValue);
+#endif
     auto currentMillis = millis();
     if (currentMillis - cleanDisplayMillis >= 600000) {
         display->clear();
@@ -131,8 +152,8 @@ void Runner::loop() {
 
 void Runner::handleHotSideTemperature(const uint8_t value) {
     if (value < 40) {
-        relay->turnOn();
+        heatRelay->turnOn();
     } else if (value > 50) {
-        relay->turnOff();
+        heatRelay->turnOff();
     }
 }
