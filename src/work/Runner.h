@@ -5,7 +5,6 @@
 #ifndef TERRARIUM_MEASURE_AND_CONTROL_RUNNER_H
 #define TERRARIUM_MEASURE_AND_CONTROL_RUNNER_H
 
-#include <Arduino.h>
 #include "../Symbols.h"
 #include "../display/Display.h"
 #include "../humidity/HumiditySensor.h"

@@ -30,14 +30,14 @@ void Runner::setup() {
     Serial.println(F("Initializing dimmer"));
 #endif
     display->displayText(F("Initializing dimmer"), 3);
-    dimmer->setup(5);
+    dimmer->setup(3);
     dimmer->reset();
 
 #ifdef DEBUG
     Serial.println(F("Initializing temperatures"));
 #endif
     display->displayText(F("Initializing temperatures"), 4);
-    thermometer->setup(4);
+    thermometer->setup(5);
 
 #ifdef DEBUG
     Serial.println(F("Initializing heat relay"));
